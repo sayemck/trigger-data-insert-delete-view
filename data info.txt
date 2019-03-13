@@ -1,0 +1,78 @@
+CREATE DATABASE rubel;
+--------------------------------
+CREATE TABLE book (
+id int(20) NOT Null AUTO_INCREMENT PRIMARY KEY,
+    book_name varchar(255) not null,
+     publisher_name varchar(255) not null,
+     price int(20) not null
+
+)
+
+---------
+INSERT INTO `book`(`id`, `book_name`, `publisher_name`, `price`) VALUES 
+('','In Search of Lost Time','Marcel Proust','400'),
+('','Don Quixote','Miguel de Cervantes','500'),
+('','Ulysses ','James Joyce','600'),
+('','The Great Gatsby','Scott Fitzgerald','50'),
+('','Moby Dick','Herman Melville','600')
+---------
+CREATE VIEW vbook AS SELECT `id`,`book_name`,`publisher_name`,`price` FROM book;
+----------
+ CREATE VIEW vbook_price AS SELECT `id`,`book_name`,`publisher_name`,`price` FROM book WHERE `price`>100;
+-------------------------------------------------
+CREATE TABLE book_info (
+id int(20) NOT Null AUTO_INCREMENT PRIMARY KEY,
+    book_id int(20) not null,
+     quantity varchar(255) not null,
+     published_date varchar(255) not null
+
+)
+------------
+INSERT INTO `book_info`(`id`, `book_id`, `quantity`, `published_date`) VALUES 
+('','1','500','2009/05/12'),
+('','2','400','2009/05/12'),
+('','3','300','2009/05/12'),
+('','4','200','2009/05/12'),
+('','5','100','2009/05/12')
+----------------
+CREATE VIEW vbook_info AS SELECT `id`,`book_id`,`quantity`,`published_date` FROM book_info;
+-----------------------------------------
+------------------------------trigger
+
+DELIMITER //
+CREATE TRIGGER book_del
+BEFORE DELETE
+ON
+book
+for each row 
+BEGIN
+DELETE FROM book_info
+WHERE book_id=OLD.id;
+END;
+//
+------------------------
+------------------------------trigger
+DELIMITER //
+CREATE TRIGGER ins_book
+AFTER INSERT
+ON
+book
+FOR EACH ROW
+BEGIN
+INSERT INTO book_info
+VALUES ('',NEW.id,100,'13th March 2019');
+END;
+//
+6110929
+-------------------------------
+CREATE PROCEDURE book_sel(
+		IN cbook_name VARCHAR(255), OUT cpublisher_name  VARCHAR(255), OUT cprice  int(20)
+		)
+BEGIN
+DECLARE dpublisher_name Varchar(255);
+DECLARE dprice  int(20);
+select publisher_name,price INTO dpublisher_name, dprice from book where book_name=cbook_name;
+SET cpublisher_name= dpublisher_name;
+SET cprice = dprice;
+END;
+//
